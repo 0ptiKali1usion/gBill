@@ -1,0 +1,142 @@
+info/online8.cfm?ServicePlan=Seasonal&FirstName=jeff&LastName=Tester&City=Law&Address1=1234&Address2=4325&State=KS&zip=12345&PHone=1234&Email1=jtester&email2=jtester2&email3=jtester3&PaymentPlan=Discover&cardnumber=6011308150213545&cardholder=jeff%20tester&expmonth=11&expyear=1999&password=asdf234
+Info to send to emaillist.cfm
+	* ReturnPage  		The cfm to return to.
+	* SendReturnID  	This is the ID value if needed to return to the return page.
+	* SendLetterID  	The number from the list below that is the LetterID for this page.
+	* SendReportID  	The number from the list below that is the ReportID fro this page.
+
+Info to send to grplist.cfm
+	* SendHeader		The Headings for the columns to display 
+	* SendFields      The fields from table GrpLists to output
+	* ReturnPage		The cfm to return to.
+	  SendReturnID  	This is the ID value if needed to return to the return page.
+	* SendLetterID  	The number from the list below that is the LetterID for this page.
+	* SendReportID  	The number from the list below that is the ReportID fro this page.
+* Required
+
+Pages to be scheduled
+MaintAutoRun.cfm - Runs every 5 to 15 minutes.
+MaintAuthrun.cfm - Resets on the first of a customers month - Runs every hour.
+MaintAuthrun2.cfm - Sends the warning emails based on plan setup - Runs every hour.
+MaintAuthrun3.cfm - Changes the Radius Account Type - Runs every hour.
+MaintImportFile.cfm - Imports text files into a database - Runs every hour.
+MaintMeterBill.cfm - Imports metered billing data - Runs every hour.
+MaintMetered.cfm - Calculates the metered charges - Runs every day.
+MaintRadiusImport.cfm - Imports the metered billing data - Runs every hour.
+MaintSessionDel.cfm - Runs every 10 minutes.
+
+AccntPlans.AccntStatus
+1 Active
+0 Deactivated
+	
+ID Report For GrpLists (ReportID)
+1  Plans      						Uses grplist.cfm
+2  Domains							Uses grplist.cfm
+3  POPs								Uses grplist.cfm
+4  Customer Search Results		Uses lookup.cfm
+5  People With Credit			Uses grplist.cfm
+6  Cancelled Customers			Uses grplist.cfm
+7  
+8  Customers That Owe			Uses baldue2.cfm
+9  Postal Customers				Uses grplist.cfm
+10 Problem Credit Cards			Uses grplist.cfm
+11 Aging Receivables				Uses aging2.cfm
+12 Signup Report					Uses grplist.cfm
+13 Adjustments						Uses grplist.cfm
+14 Deactivated Customers		Uses grplist.cfm
+15 Deposit History Results    Uses grplist.cfm
+16 Payment Totals					Uses grplist.cfm
+17 Debiter							Uses monthinv2.cfm
+18 Tax Report						Uses grplist.cfm
+19 CC Batch                   Uses grplist.cfm   and ccoutput.cfm
+20 Customer List					Uses grplist.cfm
+21 Private Domains				Uses grplist.cfm
+22 Customer BOB History       Uses grplist.cfm
+23 Staff BOB History   			Uses grplist.cfm
+24
+25 Sessselect.cfm 				Uses grplist.cfm
+26 Report2.cfm						Uses grplist.cfm
+27 Sestot.cfm						Uses grplist.cfm
+28 ReportDebits.cfm				Uses grplist.cfm
+29 Commission.cfm					Uses grplist.cfm
+30 Autodeact.cfm					
+
+ID E-Mail (LetterID)
+1  Plans								Uses emaillist.cfm
+2  Domains							Uses emaillist.cfm
+3  POPs								Uses emaillist.cfm
+4  Customer Search Results		NA
+5  People With Credit 			Uses emaillist.cfm
+6  Mass E-Mailer					Uses email2.cfm
+7  Monthly Statements			
+8  Customers That Owe			
+9  Postal Customers 				Uses emaillist.cfm
+10 Problem Credit Cards			Uses emaillist.cfm
+11 Aging Receivables				Uses emaillist.cfm
+12 Signup Report					Uses emaillist.cfm
+13 Adjustments						Uses emaillist.cfm
+14 Deactivated Customers		Uses emaillist.cfm	
+15 Deposit History Results    Uses emaillist.cfm
+16 Payment Totals					Uses emaillist.cfm
+17 Debiter							Uses monthinv3.cfm
+18 										  
+19 CC Batch							Uses monthinv3.cfm
+20 Customer List					Uses emaillist.cfm
+21
+22
+23
+24 Payment History            Uses emailsend.cfm
+25 Sessselect.cfm					Uses emaillist.cfm
+26 Report2.cfm						Uses emaillist.cfm
+27 
+28 ReportDebits.cfm				Uses emaillist.cfm   
+29 
+30 
+
+BOB History Types
+Cancel Scheduled				Scheduled an account for cancelation
+Create Deposit					Created a deposit
+Deactivate Scheduled			Scheduled an account for deactivation
+Debit Metered					Debited people on the metered list
+Debited							Ran the debitor
+Deleted Transactions			Deleted transactions
+Domain							Added, Deleted or edited a domain
+Edited Add User Setup		Edited the add user setup
+Edited Customer Info			Edited a customers information as described in the memo.
+EMailed							Sent an email
+IBOB Automatic					An automatic function of IBOB.
+Login								Logged into BOB
+Menu Headers					Menu headers were added, deleted or edited
+Menu Item						Menu items were added, deleted or edited
+Metered Billing				Reset one of the Metered Billing dates
+Plans								Added, deleted or edited a plan
+POPs								Added, deleted or edited a POP
+Reactivate Scheduled  		Scheduled an account for reactivation
+Scheduled Event Deleted 	Scheduled event deleted from autorun
+Staff								Added, Edited or deleted a staff member
+Staff Messages					Edit, Add or delete Staff Messages
+System							Edit the system configurations
+Unauthorized Access			Attempt to access a page that the admin does not have permission to
+Updated File					Updated a file using the File Updater
+
+
+Anytime there is an insert into transaction it must be followed by:
+<cfquery name="GetID" datasource="#pds#">
+	SELECT Max(TransID) As NTransID 
+	FROM Transactions
+</cfquery>
+<cfset TheAccountID = PrimaryAccountID>
+<cfset TransType = "Debit">
+<cfinclude template="CFPayment.cfm">
+
+<!--- BOB History --->
+<cfif Not IsDefined("NoBOBHist")>
+	<cfquery name="BOBHist" datasource="#pds#">
+		INSERT INTO BOBHist
+		(ActionEmail, AccountID, AdminID,  ActionDate, Action, ActionDesc) 
+		VALUES 
+		(Null,0,#TheAdminID#, #Now()#,'Domain','#StaffMemberName.FirstName# #StaffMemberName.LastName# changed the default domain to #GetDom.DomainName#.')
+	</cfquery>
+</cfif>
+
+

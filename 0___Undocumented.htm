@@ -1,0 +1,80 @@
+Undocumented features
+	To turn off the tracking of gBill History, place the following in the setup table.
+		VarName - NoBOBHist 
+		Value1 - 1 
+		AutoLoadYN - 1 
+
+	Go into the CreditCardTypes table.  Change the SortOrder from 1 to the order you want the cards to display.
+
+	Add a record in the setup table. Varname - AddYear.  Value - The Number of years ahead for the Credit Card Expire Year.
+	
+	To change the min and max lengths of the gBill login and password add the following to the setup table.
+		BOBMinL
+		BOBMaxL
+		BOBMinP
+		BOBMaxP
+	
+	To set how many emails get mailed per loop add the following to the setup table.
+	This will also determine how many debits get processed per jump on the debitor.
+		SendRows
+	
+	To set how long between page refreshes when the email is being processed add the following to teh setup table.
+	This will also set how long the refresh is on the debitor.
+		JumpSecs
+	
+	To change the Aging Receivables to different values than 30, 60 ,90 add the following variables to the setup table.
+		Past30 - set the value to the number of days to replace the 30.
+		Past60 - set the value to the number of days to replace the 60.
+		Past90 - set the value to the number of days to replace the 90.
+
+	To change the number of months ahead to be warned about an expiring credit card add the following to the setup table.
+		WarnExpMonth - set the number of months till the card expires.
+
+	To change the default Minimum Credit card number length add this to the CustomCCOutput table
+		FieldName1 - MinCCLen
+		Description1 - Minimum Credit card number length
+		UseYN - 1 
+		CFVarYN - 1 
+		UseTab - 5
+		SortOrder - 1
+		FieldValue - x       x=Min length you wish to allow.
+
+	To change the default Maximum Credit card number length add this to the CustomCCOutput table
+		FieldName1 - MaxCCLen
+		Description1 - Maximum Credit card number length
+		UseYN - 1 
+		CFVarYN - 1 
+		UseTab - 5
+		SortOrder - 1 
+		FieldValue - x       x=Max length you wish to allow.
+	
+	To have columns show a total on the session history go into the CustomAuthSetup and place the following in the ReportTotal column.	
+		0 - No Totals
+		1 - Time Totals
+		2 - Number Totals
+	To set the order of the columns in the session history report go into the CustomAuthSetup and set the order in the sortorder column.
+	To have a column not show in the session history report go into the CustomAuthSetup and set ReportUse to 0.		
+	
+	To have a custom cfm included everytime the MaintAutoRun.cfm runs, place a record in AutoRun.  
+	The DoAction is "PermanentCustom" and the cfm name goes in the field value2.
+
+	To set the sortorder for the adding Email or FTP accounts open the table CustomFTPSetup or CustomEMailSetup and enter the order in the sortorder column.
+		
+	To set a group of IPs to show error pages enter a record into the setup table.
+		varname - IPRange 
+		Value1 - Lowest IP for error pages. 
+		Description - Highest IP for error pages. 
+		AutoLoadYN - 0 
+		All IPs (inclusive) between the range will get descriptive error pages. 
+		
+	To set how many months allowed in the plans recurring cycle add the following to the setup table.
+		VarName - RCycleMax 
+		Value1 - The highest number of months 
+		AutoLoadYN - 1
+		
+	To override the default Auth expiration date of 12/31/2020.  Add the following to the setup table.
+		VarName - SetAuthExpireDate
+		DateValue1 - The date for the Auth accounts to expire
+		AutoLoadYN - 0 
+		
+		 
